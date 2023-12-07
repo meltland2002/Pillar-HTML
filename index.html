@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <title>Pillar</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+  <!--<div class="post">This is a post!</div>-->
+  <main>
+  <div id="scene"><center><div class="lds-ring"><div></div><div></div><div></div><div></div></div></center></div>
+  <div id="msgs"></div>
+  </main>
+  <menu id="menu" style="display: none;"></menu>
+  <script>
+var killme = false
+var page = "login"
+var lul = 0
+function main() {
+  page = "login"
+  webSocket = new WebSocket("wss://server.meower.org/");
+  var loggedin = false
+
+  webSocket.onclose = (event) => {
+  	logout(true)
+  };
+
+  webSocket.onmessage = (event) => {
+    console.log("INC: " + event.data);
+  
+    var sentshit = JSON.parse(event.data);
+    if (sentshit.val == "I:112 | Trusted Access enabled") {
+    	var data = {
+  			cmd: "direct",
+  	  	val: {cmd: "type", val: "js"}
+    	};
+    	
+  		webSocket.send(JSON.stringify(data));
+  		console.log("OUT: " + JSON.stringify(data));
+  		
+  		var data = {
+  			cmd: "direct",
+  	  	val: "meower"
+    	};
+    	
+  		webSocket.send(JSON.stringify(data));
+  		console.log("OUT: " + JSON.stringify(data));
+  		
+  		document.getElementById("scene").innerHTML = "<center><input type='text' id='userinput' placeholder='Username...'><br><input type='password' id='passinput' placeholder='Password...'><br><input type='button' id='submit' value='Log in' onclick='dowizard()'><input type='button' id='submit' value='Sign up' onclick='doswizard()'></center>"
+  		if (localStorage.getItem("token")!=undefined && localStorage.getItem("uname")!=undefined) {
+  		  document.getElementById("userinput").value = localStorage.getItem("uname")
+  		  document.getElementById("passinput").value = localStorage.getItem("token")
+  		  dowizard()
+  		};
+  	} else if (sentshit.val.mode == "auth") {
+  			loggedin = true
+  			page = "home"
+  			if (localStorage.getItem("token")==undefined || localStorage.getItem("uname")==undefined) {
+  			  localStorage.setItem("uname", sentshit.val.payload.username);
+  			  localStorage.setItem("token", sentshit.val.payload.token);
+  			};
+  			document.getElementById("menu").innerHTML = "<img class='navicon' src='/assets/home.svg' onclick='loadhome()'><img class='navicon' src='/assets/discover.svg'><img class='navicon' src='/assets/you.svg'>"
+  	    document.getElementById("menu").style = ""
+  	    document.getElementById("msgs").innerHTML = ""
+        loadhome()
+  			console.log("Logged in!")
+  	} else if (sentshit.val == "E:110 | ID conflict") {
+  			alert("ID conflict. You probably logged in on another client. Refresh the page and log back in to continue.")
+  	} else if (sentshit.val.post_origin == "home") {
+  			if (loggedin == true && page == "home") {
+  				loadpost(sentshit.val)
+	  		}
+	  } else if (killme) {
+	    return 0
+	  } else if (sentshit.val.mode=="update_post") {
+	    console.log("Got update post for " + sentshit.val.payload._id);
+	    for (var vi = 0; vi < document.getElementById(sentshit.val.payload._id).children.length; vi++) {
+	      i = document.getElementById(sentshit.val.payload._id).children[vi]
+	      if (i.tagName=="IMG" && i.className=="editedicon") {
+	        i.style = "height: 6vw; width: auto; vertical-align: middle; margin-bottom: 5px;"
+	      } else if (i.tagName=="POSTCONTENT") {
+	        i.innerText = sentshit.val.payload.p
+	      }
+	    }
+	  } else if (sentshit.cmd=="ulist") {
+	    var iul = sentshit.val
+	    var sul = iul.split(";")
+	    lul = sul.length - 1
+	    if (page=="home") {
+	      document.getElementById("pghead").innerText = "Home - " + lul.toString() + " users online"
+	    }
+	  }
+  }
+};
+
+function loadpost(p) {
+  if (p.u == "Discord") {
+    var rcon = p.p;
+    var parts = rcon.split(': ');
+    var user = parts[0];
+    var content = parts.slice(1).join(': ')
+    var rawsplit = rcon.split(": ");
+  } else {
+    var content = p.p
+    var user = p.u;
+  }
+  var post = document.createElement("div");
+  post.id = p._id
+  if (user==localStorage.getItem("uname")) {
+    post.classList.add("mpost");
+  } else {
+    post.classList.add("post");
+  }
+  var userIcon = document.createElement("img");
+  userIcon.onerror = function() {
+    this.src="/assets/err.png";
+    this.onerror="";
+  };
+  const xhttp = new XMLHttpRequest();
+  xhttp.open("GET", "https://api.meower.org/users/" + user);
+  xhttp.onload = () => {
+    var c = JSON.parse(xhttp.response);
+    var pfplr = c["pfp_data"] - 1
+    userIcon.src = "https://raw.githubusercontent.com/meower-media-co/Meower-Server/develop/static/icon/" + pfplr.toString() + ".png";
+  };
+  xhttp.send();
+  userIcon.style = 'float: left; width: 12vw; height: auto; margin-right: 2vw;';
+  post.appendChild(userIcon);
+  var postContent = document.createElement("postusername");
+  postContent.innerText = user;
+  post.appendChild(postContent);
+  if (p.u=="Discord") {
+    var bridgeBadge = document.createElement("badge");
+    bridgeBadge.style = "background-color: #333; color: white; border-radius: 30px; padding: 1vw; margin-left: 2vw; padding-left: 2vw; padding-right: 2vw; font-size: small; vertical-align: middle; margin-bottom: 5px;";
+    bridgeBadge.innerText = "BRIDGED";
+    post.appendChild(bridgeBadge);
+  }
+  var editedicon = document.createElement("img");
+  editedicon.classList.add("editedicon")
+  editedicon.src = "/assets/pencil-line.svg"
+  if (p.edited_at == undefined) {
+    editedicon.style = "display: none;"
+  } else {
+    editedicon.style = "height: 6vw; width: auto; vertical-align: middle; margin-left: 2vw;"
+  }
+  post.appendChild(editedicon);
+  var breakl = document.createElement("br");
+  post.appendChild(breakl);
+  var postContent = document.createElement("postcontent");
+  postContent.innerText = content
+  //postContent.innerHTML = postContent.innerText.replace(/((http|https)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?)/g,'<a href="$1">$1</a>'); --!!!------- DON'T USE THIS UNLESS YOU LIKE XSS!
+  post.appendChild(postContent);
+  var breaklr = document.createElement("br");
+  post.appendChild(breaklr);
+  var replybtn = document.createElement("img");
+  replybtn.src = "/assets/reply.svg"
+  replybtn.style = "height: 10vw; width: auto; vertical-align: middle; margin-left: 2vw;"
+  replybtn.onclick = function () {if (document.getElementById('msg').value.charAt(0)!="@") {document.getElementById('msg').value = "@" + user + " " + document.getElementById('msg').value}}
+  post.appendChild(replybtn);
+  if (document.getElementById("msgs").firstChild) {
+    document.getElementById("msgs").insertBefore(post, document.getElementById("msgs").firstChild);
+  } else {
+    document.getElementById("msgs").appendChild(post);
+  }
+  if (document.getElementById("msgs").children.length>=11) {
+    document.getElementById("msgs").removeChild(document.getElementById("msgs").lastChild);
+  }
+}
+
+function dowizard() {
+			console.log(document.getElementById('userinput').value);
+			var data = {
+				cmd: "direct",
+		  	val: {cmd: "authpswd", val: {username: document.getElementById('userinput').value, pswd: document.getElementById('passinput').value }}
+  		};
+  	  document.getElementById("msgs").innerHTML = '<center><div class="lds-ring"><div></div><div></div><div></div><div></div></div></center>'
+			webSocket.send(JSON.stringify(data));
+			console.log("User is logging in, details will not be logged for security reasons.");
+};
+			
+function doswizard() {
+			console.log(document.getElementById('userinput').value);
+			var data = {
+				cmd: "direct",
+		  	val: {cmd: "gen_account", val: {username: document.getElementById('userinput').value, pswd: document.getElementById('passinput').value }}
+  		};
+  	  document.getElementById("msgs").innerHTML = '<center><div class="lds-ring"><div></div><div></div><div></div><div></div></div></center>'
+			webSocket.send(JSON.stringify(data));
+			console.log("User is signing up, details will not be logged for security reasons.");		
+}
+		
+function dopostwizard() {
+			console.log("USER POSTED: " + document.getElementById('msg').value);
+			//var data = {
+				//cmd: "direct",
+		  	//val: {cmd: "post_chat", val: {chatid: "livechat", "p": document.getElementById('msg').value}}
+  		//};
+  		var data = {
+				cmd: "direct",
+		  	val: {cmd: "post_home", val: document.getElementById('msg').value}
+  		};
+			webSocket.send(JSON.stringify(data));
+			console.log("OUT: " + JSON.stringify(data));
+			document.getElementById('msg').value = ""
+}
+
+function loadhome() {
+  document.getElementById("scene").innerHTML = "<center><pghead id='pghead'>Home</pghead><input type='text' id='msg' autocomplete='false' placeholder='Start typing...' style='width: 85vw; height: 7.5vw; margin: 1vw; vertical-align: middle;'><img src='/assets/post.svg' class='postbtn' onclick='dopostwizard()'></center>"
+  document.getElementById("pghead").innerText = "Home - " + lul.toString() + " users online"
+  const xhttp = new XMLHttpRequest();
+  xhttp.open("GET", "https://api.meower.org/home?autoget");
+  xhttp.onload = () => {
+    var c = JSON.parse(xhttp.response);
+    var i = 24
+    while (i != 0) {
+      i -= 1
+      console.log("Loading post: " + i.toString());
+      loadpost(c["autoget"][i])
+    }
+  };
+  xhttp.send();
+}
+
+function logout(iskl) {
+  if (iskl!=true) {
+    localStorage.clear()
+    webSocket.close()
+  }
+  killme = true
+  document.getElementById("menu").style = "display: none;"
+  document.getElementById("msgs").innerHTML = ""
+  document.getElementById("menu").innerHTML = ""
+  killme = false
+  main()
+}
+
+function ping() {
+  webSocket.send(JSON.stringify({cmd: "ping", val: ""}))
+}
+
+main()
+setInterval(ping, 7500)
+</script>
+  </body>
+</html>

@@ -1,0 +1,150 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik&display=swap');
+
+body {
+  padding: 0;
+  margin: 0;
+  font-family: "Rubik", sans-serif;
+  font-size: large;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f6f6f6;
+}
+
+main {
+  flex: 1;
+}
+        
+menu {
+  position: sticky;
+  background-color: #333;
+  color: white;
+  text-align: center;
+  padding: 1em;
+  bottom: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  padding-bottom: 8vw;
+}
+
+pomenu {
+  position: sticky;
+  text-align: center;
+  padding: 1em;
+  bottom: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+}
+
+
+.navicon {
+  width: 14vw;
+  height: auto;
+  padding: 1vw;
+  padding-left: 3vw;
+  padding-right: 3vw;
+}
+
+#scene {
+  margin-top: 3vw;
+}
+
+pghead {
+  background-color: #f0f0f0;
+  padding: 2vw;
+  border-style: solid;
+  border-radius: 3vw;
+  border-color: #dedede;
+  margin: 2vw;
+  display: flex;
+  justify-content: center;
+}
+
+.post {
+  background-color: #f0f0f0;
+  margin: 2vw;
+  padding: 3vw;
+  border-style: solid;
+  border-radius: 3vw 3vw 3vw 1vw;
+  border-color: #dedede;
+  position: relative;
+}
+
+.mpost {
+  background-color: #f0f0f0;
+  margin: 2vw;
+  padding: 3vw;
+  border-style: solid;
+  border-radius: 3vw 3vw 1vw 3vw;
+  border-color: #dedede;
+  position: relative;
+}
+
+postusername {
+  font-size: x-large;
+  font-weight: bold;
+  vertical-align: middle;
+}
+
+input[type=password] {
+  width: 93vw;
+  height: 8vw;
+  margin: 1vw;
+}
+
+input[type=text] {
+  width: 93vw;
+  height: 8vw;
+  margin: 1vw;
+}
+
+.postbtn {
+  height: 8vw;
+  width: auto;
+  vertical-align: middle;
+}
+
+input[type=button] {
+  width: 40vw;
+  height: 8vw;
+  margin: 1vw;
+}
+
+.lds-ring {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+.lds-ring div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  margin: 8px;
+  border: 8px solid #000;
+  border-radius: 50%;
+  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: #000 transparent transparent transparent;
+}
+.lds-ring div:nth-child(1) {
+  animation-delay: -0.45s;
+}
+.lds-ring div:nth-child(2) {
+  animation-delay: -0.3s;
+}
+.lds-ring div:nth-child(3) {
+  animation-delay: -0.15s;
+}
+@keyframes lds-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+

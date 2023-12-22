@@ -9,6 +9,7 @@ body {
   display: flex;
   flex-direction: column;
   background-color: #f6f6f6;
+  overflow-wrap: anywhere;
 }
 
 main {
@@ -25,7 +26,7 @@ menu {
   margin: 0;
   display: flex;
   justify-content: center;
-  padding-bottom: 8vw;
+  padding-bottom: 32px;
 }
 
 pomenu {
@@ -40,76 +41,43 @@ pomenu {
 
 
 .navicon {
-  width: 14vw;
+  width: 52px;
   height: auto;
-  padding: 1vw;
-  padding-left: 3vw;
-  padding-right: 3vw;
+  padding: 3px;
+  padding-left: 8px;
+  padding-right: 8px;
 }
 
 #scene {
   margin-top: 3vw;
 }
 
-pghead {
-  background-color: #f0f0f0;
-  padding: 2vw;
-  border-style: solid;
-  border-radius: 3vw;
-  border-color: #dedede;
-  margin: 2vw;
-  display: flex;
-  justify-content: center;
-}
-
-.post {
-  background-color: #f0f0f0;
-  margin: 2vw;
-  padding: 3vw;
-  border-style: solid;
-  border-radius: 3vw 3vw 3vw 1vw;
-  border-color: #dedede;
-  position: relative;
-}
-
-.mpost {
-  background-color: #f0f0f0;
-  margin: 2vw;
-  padding: 3vw;
-  border-style: solid;
-  border-radius: 3vw 3vw 1vw 3vw;
-  border-color: #dedede;
-  position: relative;
-}
-
 postusername {
-  font-size: x-large;
+  font-size: large;
   font-weight: bold;
   vertical-align: middle;
 }
 
-input[type=password] {
-  width: 93vw;
-  height: 8vw;
-  margin: 1vw;
+.postbtn {
+  height: 32px;
+  width: auto;
+  vertical-align: middle;
+  margin-top: 2px;
 }
 
 input[type=text] {
-  width: 93vw;
-  height: 8vw;
-  margin: 1vw;
+  height: 32px;
+  width: 100%;
 }
 
-.postbtn {
-  height: 8vw;
-  width: auto;
-  vertical-align: middle;
+input[type=password] {
+  height: 32px;
+  width: 100%;
 }
 
 input[type=button] {
-  width: 40vw;
-  height: 8vw;
-  margin: 1vw;
+  height: 24px;
+  margin: 3px;
 }
 
 .lds-ring {
@@ -148,3 +116,7 @@ input[type=button] {
   }
 }
 
+h6, h5, h4, h3, h2, h1, p {
+  margin: 0;
+  padding: 0;
+}

@@ -1,4 +1,25 @@
-# Archived.
+# Pillar HTML
+A Meower client made in HTML.
 
-# Pillar-HTML
-A Meower mobile client made in HTML.
+# Checklist
+[X] - Logging in
+[X] - Signing up
+[X] - Posting
+[X] - Replies
+[X] - Recieve posts
+[X] - Load previous posts
+[X] - Show edited posts
+[ ] - Edit posts
+[ ] - Delete posts
+[ ] - Edit profile
+[ ] - Edit settings
+[ ] - Adhere to themes (defaults)
+[ ] - Adhere to themes (customs)
+[ ] - Moderation
+[ ] - Searching
+[ ] - Livechat
+[ ] - Groupchats
+[ ] - Inbox
+[ ] - Markdown
+[ ] - Image embeds
+...

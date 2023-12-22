@@ -40,9 +40,29 @@ ipgh {
   <div id="msgs"></div>
   </main>
   <menu id="menu" style="display: none;"></menu>
-  <script type="text/javascript" src="./src/purify.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/markdown-it@14.0.0/dist/markdown-it.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
   <script>
+//import markdownit from 'markdown-it'
+//import hljs from 'highlight.js' // https://highlightjs.org
+
+// Actual default values
+const md = markdownit({
+  highlight: function (str, lang) {
+    if (lang && hljs.getLanguage(lang)) {
+      try {
+        return hljs.highlight(str, { language: lang }).value;
+      } catch (__) {}
+    }
+
+    return ''; // use external default escaping
+  },
+  html: false,
+  linkify: true,
+  typographer: true
+});
+  
 var killme = false
 var page = "login"
 var lul = 0
@@ -65,16 +85,6 @@ if (window.mobileCheck()) {
 } else {
   document.getElementById("cstyle").innerText = ".post {background-color: #f0f0f0;margin: 6px;padding: 9px;border-style: solid;border-radius: 12px;border-color: #dedede;position: relative;margin-left: 65px;margin-right: 65px;} pghead {background-color: #f0f0f0;padding: 6px;border-style: solid;border-radius: 12px;border-color: #dedede;margin: 6px;margin-left: 65px;margin-right: 65px;display: flex;justify-content: center;} ipgh {padding: 6px;display: flex;justify-content: center;margin: 6px;margin-right: 65px;margin-left: 65px;}"
 };
-
-function escapeHTML(html) {
-    var escape = document.createElement('textarea');
-    escape.textContent = html;
-    return escape.innerHTML;
-}
-
-function ctext(unclean){
-    return escapeHTML(unclean.trim());
-}
 
 function main() {
   page = "login"
@@ -202,15 +212,13 @@ function loadpost(p) {
   post.appendChild(editedicon);
   var breakl = document.createElement("br");
   post.appendChild(breakl);
+  var postAge = document.createElement("postold");
+  postAge.innerHTML = "<i>Placeholder</i>"
+  post.appendChild(postAge);
   var postContent = document.createElement("postcontent");
-  marked.Renderer.prototype.paragraph = function(text) {
-    return text + '\n';
-  };
-  postContent.innerHTML = marked.parse(ctext(content));
+  postContent.innerHTML = md.render(content);
   postContent.style = "line-height:1.4;"
   post.appendChild(postContent);
-  var breaklr = document.createElement("br");
-  post.appendChild(breaklr);
   var replybtn = document.createElement("img");
   replybtn.src = "/assets/reply.svg"
   replybtn.style = "height: 30px; width: auto; vertical-align: middle; margin-left: 6px;"

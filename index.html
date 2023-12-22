@@ -133,7 +133,7 @@ function main() {
   			console.log("Logged in!")
   	} else if (sentshit.val == "E:110 | ID conflict") {
   			alert("ID conflict. You probably logged in on another client. Refresh the page and log back in to continue.")
-  	} else if (sentshit.val.post_origin == "livechat") {
+  	} else if (sentshit.val.post_origin == "home") {
   			if (loggedin == true && page == "home") {
   				loadpost(sentshit.val)
 	  		}
@@ -282,7 +282,7 @@ function dopostwizard() {
 }
 
 function loadhome() {
-  document.getElementById("scene").innerHTML = "<center><pghead id='pghead'>Home</pghead><ipgh><textarea id='msg' autocomplete='false' placeholder='Start typing...' style='margin-right: 6px;vertical-align: middle;'></textarea><img src='./assets/post.svg' class='postbtn' onclick='dopostwizard()'></ipgh></center>"
+  document.getElementById("scene").innerHTML = "<center><pghead id='pghead'>Home</pghead><ipgh><textarea id='msg' autocomplete='false' placeholder='Start typing...' style='margin-right: 6px;vertical-align: middle;width:100%'></textarea><img src='./assets/post.svg' class='postbtn' onclick='dopostwizard()'></ipgh></center>"
   var psbox = document.getElementById("msg");
   autosize(psbox)
   document.getElementById("pghead").innerText = "Home - " + lul.toString() + " users online"

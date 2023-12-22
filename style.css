@@ -70,6 +70,11 @@ input[type=text] {
   width: 100%;
 }
 
+textarea {
+  height: 32px;
+  width: 100%;
+}
+
 input[type=password] {
   height: 32px;
   width: 100%;

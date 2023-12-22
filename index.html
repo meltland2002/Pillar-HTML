@@ -43,11 +43,8 @@ ipgh {
   <script src="https://cdn.jsdelivr.net/npm/markdown-it@14.0.0/dist/markdown-it.min.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/default.min.css">
   <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+  <script src="./src/autosize.min.js"></script>
   <script>
-//import markdownit from 'markdown-it'
-//import hljs from 'highlight.js' // https://highlightjs.org
-
-// Actual default values
 const md = markdownit({
   highlight: function (str, lang) {
     if (lang && hljs.getLanguage(lang)) {
@@ -213,10 +210,21 @@ function loadpost(p) {
   var breakl = document.createElement("br");
   post.appendChild(breakl);
   var postAge = document.createElement("postold");
-  postAge.innerHTML = "<i>Placeholder</i>"
+  tsr = p.t.e
+	tsra = tsr * 1000
+	tsrb = Math.trunc(tsra)
+	var ts = new Date();
+	ts.setTime(tsrb);
+	sts = ts.toLocaleString();
+  postAge.innerHTML = "<i>" + sts + "</i>"
   post.appendChild(postAge);
   var postContent = document.createElement("postcontent");
-  postContent.innerHTML = md.render(content);
+  blist = [""," ","# ","## ","### ","#### ","##### ","###### ","[]()","![]()","\n"]
+  if (blist.includes(content)) {
+    postContent.innerHTML = "<br>"
+  } else {
+    postContent.innerHTML = md.render(content);
+  }
   postContent.style = "line-height:1.4;"
   post.appendChild(postContent);
   var replybtn = document.createElement("img");
@@ -274,13 +282,9 @@ function dopostwizard() {
 }
 
 function loadhome() {
-  document.getElementById("scene").innerHTML = "<center><pghead id='pghead'>Home</pghead><ipgh><input type='text' id='msg' autocomplete='false' placeholder='Start typing...' style='margin-right: 6px;vertical-align: middle;'><img src='./assets/post.svg' class='postbtn' onclick='dopostwizard()'></ipgh></center>"
+  document.getElementById("scene").innerHTML = "<center><pghead id='pghead'>Home</pghead><ipgh><textarea id='msg' autocomplete='false' placeholder='Start typing...' style='margin-right: 6px;vertical-align: middle;'></textarea><img src='./assets/post.svg' class='postbtn' onclick='dopostwizard()'></ipgh></center>"
   var psbox = document.getElementById("msg");
-  psbox.addEventListener("keydown", function (e) {
-    if (e.code === "Enter") {  //checks whether the pressed key is "Enter"
-      dopostwizard()
-    }
-  });
+  autosize(psbox)
   document.getElementById("pghead").innerText = "Home - " + lul.toString() + " users online"
   const xhttp = new XMLHttpRequest();
   xhttp.open("GET", "https://api.meower.org/home?autoget");

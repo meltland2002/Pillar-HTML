@@ -7,12 +7,8 @@
     <link rel="stylesheet" href="style.css">
     <style id="cstyle">
 .post {
-  background-color: #f0f0f0;
   margin: 6px;
   padding: 9px;
-  border-style: solid;
-  border-radius: 12px;
-  border-color: #dedede;
   position: relative;
 }
 pghead {
@@ -24,6 +20,17 @@ pghead {
   display: flex;
   justify-content: center;
   margin: 6px;
+}
+pgnc {
+  background-color: #f0f0f0;
+  padding: 6px;
+  border-style: solid;
+  border-radius: 12px;
+  border-color: #dedede;
+  display: flex;
+  margin: 6px;
+  vertical-align: middle;
+  align-items:center;
 }
 ipgh {
   padding: 6px;
@@ -45,6 +52,8 @@ ipgh {
   <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
   <script src="./src/autosize.min.js"></script>
   <script>
+const devel = false
+  
 const md = markdownit({
   highlight: function (str, lang) {
     if (lang && hljs.getLanguage(lang)) {
@@ -78,9 +87,9 @@ function replsh(rpl) {
 }
 
 if (window.mobileCheck()) {
-  document.getElementById("cstyle").innerText = ".post {background-color: #f0f0f0;margin: 6px;padding: 9px;border-style: solid;border-radius: 12px;border-color: #dedede;position: relative;} pghead {background-color: #f0f0f0;padding: 6px;border-style: solid;border-radius: 12px;border-color: #dedede;display: flex;justify-content: center;margin: 6px;} ipgh {padding: 6px;display: flex;justify-content: center;margin: 6px;}"
+  document.getElementById("cstyle").innerText = ".post {padding: 9px;position: relative;} pghead {background-color: #f0f0f0;padding: 6px;border-style: solid;border-radius: 12px;border-color: #dedede;display: flex;justify-content: center;margin: 6px;} ipgh {padding: 6px;display: flex;justify-content: center;margin: 6px;} pgnc {background-color: #f0f0f0;padding: 6px;border-style: solid;border-radius: 12px;border-color: #dedede;display: flex;margin: 6px;vertical-align: middle;align-items:center;}"
 } else {
-  document.getElementById("cstyle").innerText = ".post {background-color: #f0f0f0;margin: 6px;padding: 9px;border-style: solid;border-radius: 12px;border-color: #dedede;position: relative;margin-left: 65px;margin-right: 65px;} pghead {background-color: #f0f0f0;padding: 6px;border-style: solid;border-radius: 12px;border-color: #dedede;margin: 6px;margin-left: 65px;margin-right: 65px;display: flex;justify-content: center;} ipgh {padding: 6px;display: flex;justify-content: center;margin: 6px;margin-right: 65px;margin-left: 65px;}"
+  document.getElementById("cstyle").innerText = ".post {position: relative;margin-left: 65px;margin-right: 65px;} pghead {background-color: #f0f0f0;padding: 6px;border-style: solid;border-radius: 12px;border-color: #dedede;margin: 6px;margin-left: 65px;margin-right: 65px;display: flex;justify-content: center;} ipgh {padding: 6px;display: flex;justify-content: center;margin: 6px;margin-right: 65px;margin-left: 65px;} pgnc {background-color: #f0f0f0;padding: 6px;border-style: solid;border-radius: 12px;border-color: #dedede;display: flex;margin: 6px; margin-left:65px;margin-right:65px;vertical-align: middle;align-items:center;}"
 };
 
 function main() {
@@ -126,7 +135,11 @@ function main() {
   			  localStorage.setItem("uname", sentshit.val.payload.username);
   			  localStorage.setItem("token", sentshit.val.payload.token);
   			};
-  			document.getElementById("menu").innerHTML = "<img class='navicon' src='./assets/home.svg' onclick='loadhome()'><img class='navicon' src='./assets/discover.svg'><img class='navicon' src='./assets/you.svg'><img class='navicon' src='./assets/settings.svg'>"
+  			//if localStorage.getItem("clientconfig")==undefined) {
+  			  //console.warn("No configuration! Resetting...");
+  			  //localStorage.setItem("clientconfig", {"replies": "pillar"});
+  			//}
+  			document.getElementById("menu").innerHTML = "<img class='navicon' src='./assets/home.svg' onclick='loadhome()'><img class='navicon' onclick='alert(\"Feature not implemented yet!\")' src='./assets/discover.svg'><img class='navicon' onclick='alert(\"Feature not implemented yet!\")' src='./assets/you.svg'><img class='navicon' src='./assets/settings.svg' onclick='loadstgs()'>"
   	    document.getElementById("menu").style = ""
   	    document.getElementById("msgs").innerHTML = ""
         loadhome()
@@ -135,6 +148,10 @@ function main() {
   			alert("ID conflict. You probably logged in on another client. Refresh the page and log back in to continue.")
   	} else if (sentshit.val.post_origin == "home") {
   			if (loggedin == true && page == "home") {
+  				loadpost(sentshit.val)
+	  		}
+	  } else if (sentshit.val.post_origin == "livechat") {
+  			if (loggedin == true && page == "home" && devel) {
   				loadpost(sentshit.val)
 	  		}
 	  } else if (killme) {
@@ -223,7 +240,16 @@ function loadpost(p) {
   if (blist.includes(content)) {
     postContent.innerHTML = "<br>"
   } else {
-    postContent.innerHTML = md.render(content);
+    var splc = content.split("\n")
+    var asplc = ""
+    for (const i in splc) {
+      if (i == splc.length - 1) {
+        asplc += splc[i]
+      } else {
+        asplc += splc[i] + "\n\n"
+      }
+    }
+    postContent.innerHTML = md.render(asplc);
   }
   postContent.style = "line-height:1.4;"
   post.appendChild(postContent);
@@ -234,6 +260,8 @@ function loadpost(p) {
     document.getElementById('msg').value = "@" + user + " [" + replsh(content) + "] " + document.getElementById('msg').value
   }}
   post.appendChild(replybtn);
+  var hr = document.createElement("hr");
+  post.appendChild(hr)
   if (document.getElementById("msgs").firstChild) {
     document.getElementById("msgs").insertBefore(post, document.getElementById("msgs").firstChild);
   } else {
@@ -268,21 +296,25 @@ function doswizard() {
 		
 function dopostwizard() {
 			console.log("USER POSTED: " + document.getElementById('msg').value);
-			//var data = {
-				//cmd: "direct",
-		  	//val: {cmd: "post_chat", val: {chatid: "livechat", "p": document.getElementById('msg').value}}
-  		//};
-  		var data = {
-				cmd: "direct",
-		  	val: {cmd: "post_home", val: document.getElementById('msg').value}
-  		};
+			if (devel) {
+			  var data = {
+				  cmd: "direct",
+  		  	val: {cmd: "post_chat", val: {chatid: "livechat", "p": document.getElementById('msg').value}}
+    		};
+    	} else { 
+  		  var data = {
+				  cmd: "direct",
+		  	  val: {cmd: "post_home", val: document.getElementById('msg').value}
+  		  };
+  		}
 			webSocket.send(JSON.stringify(data));
 			console.log("OUT: " + JSON.stringify(data));
 			document.getElementById('msg').value = ""
 }
 
 function loadhome() {
-  document.getElementById("scene").innerHTML = "<center><pghead id='pghead'>Home</pghead><ipgh><textarea id='msg' autocomplete='false' placeholder='Start typing...' style='margin-right: 6px;vertical-align: middle;width:100%'></textarea><img src='./assets/post.svg' class='postbtn' onclick='dopostwizard()'></ipgh></center>"
+  page = "home"
+  document.getElementById("scene").innerHTML = "<center><pghead id='pghead'>Home</pghead><ipgh><textarea id='msg' autocomplete='false' placeholder='Start typing...'></textarea><img src='./assets/post.svg' class='postbtn' onclick='dopostwizard()'></ipgh></center>"
   var psbox = document.getElementById("msg");
   autosize(psbox)
   document.getElementById("pghead").innerText = "Home - " + lul.toString() + " users online"
@@ -313,12 +345,22 @@ function logout(iskl) {
   main()
 }
 
+function loadstgs(pg) {
+  page = "settings"
+  document.getElementById("msgs").innerHTML = ""
+  if (pg===undefined) {
+    document.getElementById("scene").innerHTML = "<pghead>Settings</pghead><br><pgnc onclick='loadstgs(\"credits\")'><img src='./assets/arrow-right.svg' style='padding-right:12px;'>Credits</pgnc><br><pgnc onclick='logout()'><img src='./assets/log-out.svg' style='padding-right:12px;'>Log Out</pgnc><br><center><small>revision j7lbwt (101)</small></center>"
+  } else if (pg=="credits") {
+    document.getElementById("scene").innerHTML = "<pghead>Credits</pghead><pgnc onclick='loadstgs()'><img src='./assets/arrow-left.svg' style='padding-right:12px;'>Back to Settings</pgnc><br><center><h3>Design</h3>closetranie<br><br><h3>Programming</h3>melt2002<br>StackOverflow<br><br><h3>Special Thanks</h3>Meower<br>3r1s_s<br>The Meower community<br>You, " + localStorage.getItem("uname") + ", for using the client</center>"
+  }
+}
+
 function ping() {
   webSocket.send(JSON.stringify({cmd: "ping", val: ""}))
 }
 
 main()
-setInterval(ping, 7500)
+setInterval(ping, 5000)
 </script>
   </body>
 </html>

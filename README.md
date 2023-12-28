@@ -1,3 +1,5 @@
+# No longer getting updates
+
 # Pillar HTML
 A Meower client made in HTML.
 
